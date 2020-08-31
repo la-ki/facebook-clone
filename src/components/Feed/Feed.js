@@ -1,43 +1,38 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './Feed.css';
 
 import StoryReel from '../StoryReel/StoryReel';
 import MessageSender from '../MessageSender/MessageSender';
 import Post from '../Post/Post';
 
+import db from '../../firebase';
+
 function Feed() {
+
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        // Real time connection to db
+        db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => (
+            setPosts(snapshot.docs.map(doc => ({id: doc.id, data: doc.data()})))
+        ))
+    }, [])
+
     return (
         <div className="feed">
             <StoryReel />
             <MessageSender />
-            <Post
-                profilePic="https://scontent.fbeg7-1.fna.fbcdn.net/v/t1.0-9/35159270_1885118164861091_6967089570097659904_o.jpg?_nc_cat=104&_nc_sid=09cbfe&_nc_ohc=t27x4Vyt8u4AX-JvvUh&_nc_ht=scontent.fbeg7-1.fna&oh=9a2ae2e510c952c8cba78615075f6847&oe=5F6F88A0"
-                message="WOOOW THIS WORKS!"
-                timestamp="This is timesmp"
-                username="Lazar Kostic"
-                image='https://cxl.com/wp-content/uploads/2018/09/coding-language.jpg'
-            />
-            <Post
-                profilePic="https://scontent.fbeg7-1.fna.fbcdn.net/v/t1.0-9/35159270_1885118164861091_6967089570097659904_o.jpg?_nc_cat=104&_nc_sid=09cbfe&_nc_ohc=t27x4Vyt8u4AX-JvvUh&_nc_ht=scontent.fbeg7-1.fna&oh=9a2ae2e510c952c8cba78615075f6847&oe=5F6F88A0"
-                message="WOOOW THIS WORKS!"
-                timestamp="This is timesmp"
-                username="Lazar Kostic"
-                image='https://cxl.com/wp-content/uploads/2018/09/coding-language.jpg'
-            />
-            <Post
-                profilePic="https://scontent.fbeg7-1.fna.fbcdn.net/v/t1.0-9/35159270_1885118164861091_6967089570097659904_o.jpg?_nc_cat=104&_nc_sid=09cbfe&_nc_ohc=t27x4Vyt8u4AX-JvvUh&_nc_ht=scontent.fbeg7-1.fna&oh=9a2ae2e510c952c8cba78615075f6847&oe=5F6F88A0"
-                message="WOOOW THIS WORKS!"
-                timestamp="This is timesmp"
-                username="Lazar Kostic"
-                image='https://cxl.com/wp-content/uploads/2018/09/coding-language.jpg'
-            />
-            <Post
-                profilePic="https://scontent.fbeg7-1.fna.fbcdn.net/v/t1.0-9/35159270_1885118164861091_6967089570097659904_o.jpg?_nc_cat=104&_nc_sid=09cbfe&_nc_ohc=t27x4Vyt8u4AX-JvvUh&_nc_ht=scontent.fbeg7-1.fna&oh=9a2ae2e510c952c8cba78615075f6847&oe=5F6F88A0"
-                message="WOOOW THIS WORKS!"
-                timestamp="This is timesmp"
-                username="Lazar Kostic"
-                image='https://cxl.com/wp-content/uploads/2018/09/coding-language.jpg'
-            />
+            
+            {posts.map(post => (
+                <Post
+                    key={post.data.id}
+                    profilePic={post.data.profilePic}
+                    message={post.data.message}
+                    username={post.data.username}
+                    image={post.data.image}
+                    timestamp={post.data.timestamp}
+                />
+            ))}
         
         </div>
     )
